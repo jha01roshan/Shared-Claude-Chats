@@ -3,12 +3,12 @@
 An archive of public Claude and Grok conversations, exported from their share
 links as plain markdown, plus the two scripts that produce it.
 
-586 conversations, 3,731 messages, ~8.7 MB.
+580 conversations, 3,557 messages, ~8.3 MB.
 
 | Directory | Source | Conversations | Messages | Longest |
 | --- | --- | --- | --- | --- |
 | `claude_chats/` | `claude.ai/share` | 300 | 2,377 | 172 |
-| `grok_chats/` | `grok.com/share` | 286 | 1,354 | 122 |
+| `grok_chats/` | `grok.com/share` | 280 | 1,180 | 42 |
 
 ## Layout
 
@@ -125,8 +125,8 @@ Optional content flags, off by default:
 ## Caveats
 
 Only public shares are reachable; there is no authenticated path, so revoked or
-private conversations return "not found." Of the 316 unique Claude links on
-file, 300 exported — the rest were no longer public.
+private conversations return "not found." The links files have been pruned to
+what actually exported, so a fresh run of either should come back clean.
 
 Both share pages are empty SPA shells, so the exporters read the underlying JSON
 APIs directly. Those endpoints sit behind a Cloudflare check that fingerprints
