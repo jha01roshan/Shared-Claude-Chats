@@ -36,6 +36,7 @@ import sys
 import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import unquote
 
 try:
     from curl_cffi import requests as cffi_requests
@@ -60,13 +61,23 @@ class ExportError(Exception):
 
 
 def extract_share_id(raw: str) -> str:
-    """Pull the share id out of a share URL or a bare id."""
-    match = SHARE_ID_RE.search(raw.strip())
+    """Pull the share id out of a share URL or a bare id.
+
+    Links copied from a browser often arrive percent-encoded, so the base64
+    padding shows up as %3D. Decoding first is what keeps "...cHk%3D_<uuid>"
+    from being read as the nonsense id "3D_<uuid>". Padding is then dropped:
+    the API accepts the shard tag with or without it, and normalising means
+    the two spellings of one conversation share a manifest entry instead of
+    being exported twice.
+    """
+    match = SHARE_ID_RE.search(unquote(raw.strip()))
     if not match:
         raise ExportError(
             "no share id found -- expected https://grok.com/share/<id> or a bare id"
         )
-    return match.group(0)
+    share_id = match.group(0)
+    prefix, sep, uuid = share_id.rpartition("_")
+    return f"{prefix.rstrip('=')}{sep}{uuid}" if sep else share_id
 
 
 def fetch_snapshot(share_id: str) -> dict:
@@ -532,11 +543,14 @@ def main() -> int:
         return 1
 
     # Dedupe by share id where possible so a messy file does not write twice.
+    # Keyed on the normalised id, so encoded and padded spellings collapse.
     seen: set[str] = set()
     ordered: list[str] = []
     for link in links:
-        match = SHARE_ID_RE.search(link)
-        key = match.group(0) if match else link
+        try:
+            key = extract_share_id(link)
+        except ExportError:
+            key = link
         if key not in seen:
             seen.add(key)
             ordered.append(link)
