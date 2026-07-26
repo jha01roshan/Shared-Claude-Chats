@@ -1,6 +1,6 @@
 # 38-File Upload Limitations Explained
 
-- Source: https://grok.com/share/c2hhcmQtMg==_161dcc97-101f-49e1-8860-5a877f0a06c6
+- Source: https://grok.com/share/c2hhcmQtMg_161dcc97-101f-49e1-8860-5a877f0a06c6
 - Created: 2025-09-27
 - Model: grok-4
 - Messages: 14

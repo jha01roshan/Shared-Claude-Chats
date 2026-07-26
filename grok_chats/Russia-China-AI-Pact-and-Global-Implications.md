@@ -1,6 +1,6 @@
 # Russia-China AI Pact and Global Implications
 
-- Source: https://grok.com/share/bGVnYWN5LWNvcHk=_2f379d15-8a99-4192-bf18-1e282e044d1f
+- Source: https://grok.com/share/bGVnYWN5LWNvcHk_2f379d15-8a99-4192-bf18-1e282e044d1f
 - Created: 2025-09-04
 - Model: grok-4
 - Messages: 2

@@ -1,6 +1,6 @@
 # Código Pionex 2025: Bono 10,000 USDT
 
-- Source: https://grok.com/share/c2hhcmQtNA==_6847df87-9603-4ae9-a25f-77a43bd29a77
+- Source: https://grok.com/share/c2hhcmQtNA_6847df87-9603-4ae9-a25f-77a43bd29a77
 - Created: 2025-08-30
 - Model: grok-4-auto, grok-3
 - Messages: 2

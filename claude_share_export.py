@@ -78,6 +78,18 @@ def fetch_snapshot(uuid: str) -> dict:
     if response.status_code == 404:
         raise ExportError("not found -- the share was deleted, revoked, or never public")
     if response.status_code == 403:
+        # Two unrelated causes share this status: a Cloudflare challenge, which
+        # answers with an HTML page, and a share that is not public, which
+        # answers with a JSON permission_error. Reporting the latter as a TLS
+        # problem sends you off upgrading curl_cffi for no reason.
+        detail = ""
+        try:
+            error = response.json().get("error")
+            detail = (error or {}).get("message") or ""
+        except Exception:
+            pass
+        if detail:
+            raise ExportError(f"not public -- {detail.rstrip('.')} to view this share")
         raise ExportError(
             "blocked by Cloudflare -- TLS impersonation was rejected; "
             "try upgrading curl_cffi"
