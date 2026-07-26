@@ -3,12 +3,12 @@
 An archive of public Claude and Grok conversations, exported from their share
 links as plain markdown, plus the two scripts that produce it.
 
-658 conversations, 4,118 messages, ~8.9 MB.
+929 conversations, 10,615 messages, ~29 MB.
 
 | Directory | Source | Conversations | Messages | Longest |
 | --- | --- | --- | --- | --- |
-| `claude_chats/` | `claude.ai/share` | 390 | 3,066 | 204 |
-| `grok_chats/` | `grok.com/share` | 268 | 1,052 | 42 |
+| `claude_chats/` | `claude.ai/share` | 410 | 3,405 | 204 |
+| `grok_chats/` | `grok.com/share` | 519 | 7,210 | 4,308 |
 
 ## Layout
 
