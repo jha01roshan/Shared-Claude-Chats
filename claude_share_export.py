@@ -8,9 +8,14 @@ Usage:
 
 A links file is newline-delimited; blank lines and #-comments are ignored.
 
-Re-running the same links file is cheap: each output directory keeps a
-manifest of what it has already exported, and known conversations are
-skipped before any network request. Use --force to re-fetch them.
+Re-running the same links file is cheap: a manifest records what has already
+been exported, and known conversations are skipped before any network
+request. Use --force to re-fetch them.
+
+The manifest survives tidying up: it is looked for in the output directory
+and then just above it, and a recorded transcript that has been moved into a
+subdirectory is still recognised (and its new location recorded) rather than
+being downloaded a second time.
 
 The share page itself is an empty SPA shell, so this reads the underlying
 JSON API instead. That endpoint sits behind a Cloudflare check that
@@ -236,62 +241,159 @@ def collect_links(positionals: list[str], link_files: list[str]) -> list[str]:
     return links
 
 
-def load_manifest(outdir: Path) -> dict:
-    """Read the per-directory record of what has already been exported.
+class Manifest:
+    """The record of what has already been exported, and where it landed.
 
-    A missing or unreadable manifest is not an error -- it just means
-    nothing is known yet, so everything gets fetched.
+    This is what makes a re-run cheap: a UUID listed here whose transcript is
+    still on disk is never requested from the network again.
     """
-    path = outdir / MANIFEST_NAME
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return {}
-    entries = data.get("exports") if isinstance(data, dict) else None
-    return entries if isinstance(entries, dict) else {}
 
+    def __init__(self, path: Path, outdir: Path, entries: dict):
+        self.path = path
+        self.outdir = outdir
+        self.entries = entries
+        self.dirty = False
+        self._by_name: dict[str, Path] | None = None
 
-def save_manifest(outdir: Path, entries: dict) -> None:
-    path = outdir / MANIFEST_NAME
-    payload = {"version": 1, "exports": entries}
-    try:
-        path.write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
-    except OSError as exc:
-        # Losing the manifest degrades caching but must not lose transcripts.
-        print(f"warning: could not write manifest: {exc}", file=sys.stderr)
+    @classmethod
+    def load(cls, outdir: Path) -> "Manifest":
+        """Find and read the manifest governing this output directory.
 
+        A missing or unreadable manifest is not an error -- it just means
+        nothing is known yet, so everything gets fetched.
+        """
+        path = cls._locate(outdir)
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return cls(path, outdir, {})
+        entries = data.get("exports") if isinstance(data, dict) else None
+        return cls(path, outdir, entries if isinstance(entries, dict) else {})
 
-def cached_path(outdir: Path, entries: dict, uuid: str) -> Path | None:
-    """The already-exported file for this UUID, if it is still on disk."""
-    entry = entries.get(uuid)
-    if not isinstance(entry, dict):
-        return None
-    name = entry.get("file")
-    if not name:
-        return None
-    path = outdir / name
-    # If the user deleted the transcript, treat it as not exported.
-    return path if path.exists() else None
+    @staticmethod
+    def _locate(outdir: Path) -> Path:
+        """Prefer a manifest in outdir, else one just above it.
+
+        Transcripts get tidied into a subdirectory after the fact, leaving the
+        manifest behind in the parent. Starting a fresh manifest in the new
+        directory would re-download every conversation the old one knows about,
+        so an existing one within two levels up is adopted instead.
+        """
+        here = outdir / MANIFEST_NAME
+        if here.exists():
+            return here
+        for parent in list(outdir.resolve().parents)[:2]:
+            candidate = parent / MANIFEST_NAME
+            if candidate.exists():
+                return candidate
+        return here
+
+    def _index(self) -> dict[str, Path]:
+        """Lazily map transcript filename -> location, one level deep.
+
+        Built only when a recorded path has gone missing, which is the moved-
+        into-a-subdirectory case.
+        """
+        if self._by_name is not None:
+            return self._by_name
+        index: dict[str, Path] = {}
+        roots = {self.outdir, self.path.parent}
+        for root in roots:
+            for child in self._listdir(root):
+                if child.is_dir():
+                    if not child.name.startswith("."):
+                        for grandchild in self._listdir(child):
+                            if grandchild.suffix == ".md" and grandchild.is_file():
+                                index.setdefault(grandchild.name, grandchild)
+                elif child.suffix == ".md":
+                    index.setdefault(child.name, child)
+        self._by_name = index
+        return index
+
+    @staticmethod
+    def _listdir(directory: Path) -> list[Path]:
+        try:
+            return sorted(directory.iterdir())
+        except OSError:
+            return []
+
+    def lookup(self, uuid: str) -> Path | None:
+        """The already-exported file for this UUID, if it is still on disk."""
+        entry = self.entries.get(uuid)
+        if not isinstance(entry, dict):
+            return None
+        name = entry.get("file")
+        if not name:
+            return None
+        for base in (self.path.parent, self.outdir):
+            candidate = base / name
+            if candidate.exists():
+                return candidate
+        # Recorded but not where it was left: find it by name before concluding
+        # it needs fetching again. If it is genuinely gone, so is the cache hit.
+        return self._index().get(Path(name).name)
+
+    def messages(self, uuid: str) -> int:
+        entry = self.entries.get(uuid)
+        return (entry.get("messages") or 0) if isinstance(entry, dict) else 0
+
+    def _record_name(self, path: Path) -> str:
+        """Store the location relative to the manifest, so moves stay legible."""
+        try:
+            return path.resolve().relative_to(self.path.parent.resolve()).as_posix()
+        except ValueError:
+            return path.name
+
+    def note_location(self, uuid: str, path: Path) -> None:
+        """Point a stale entry at where its transcript actually lives now."""
+        entry = self.entries.get(uuid)
+        if not isinstance(entry, dict):
+            return
+        name = self._record_name(path)
+        if entry.get("file") != name:
+            entry["file"] = name
+            self.dirty = True
+
+    def record(self, uuid: str, path: Path, snapshot: dict, count: int) -> None:
+        self.entries[uuid] = {
+            "file": self._record_name(path),
+            "title": (snapshot.get("snapshot_name") or "").strip(),
+            "messages": count,
+            "exported_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        }
+        self.dirty = True
+
+    def save(self) -> None:
+        if not self.dirty:
+            return
+        payload = {"version": 1, "exports": self.entries}
+        try:
+            self.path.write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+        except OSError as exc:
+            # Losing the manifest degrades caching but must not lose transcripts.
+            print(f"warning: could not write manifest: {exc}", file=sys.stderr)
+        else:
+            self.dirty = False
 
 
 def export_one(
     link: str,
     outdir: Path,
     include_thinking: bool,
-    entries: dict,
+    manifest: Manifest,
     force: bool,
 ) -> tuple[str, Path, int]:
     """Returns (status, path, message_count) where status is 'written' or 'skipped'."""
     uuid = extract_uuid(link)
 
-    existing = cached_path(outdir, entries, uuid)
+    existing = manifest.lookup(uuid)
     if existing is not None and not force:
         # The whole point: no network request for something we already have.
-        entry = entries.get(uuid) or {}
-        return "skipped", existing, entry.get("messages") or 0
+        manifest.note_location(uuid, existing)
+        return "skipped", existing, manifest.messages(uuid)
 
     snapshot = fetch_snapshot(uuid)
     markdown, count = render_markdown(snapshot, uuid, include_thinking)
@@ -304,12 +406,7 @@ def export_one(
         path = unique_path(outdir, slug)
     path.write_text(markdown, encoding="utf-8")
 
-    entries[uuid] = {
-        "file": path.name,
-        "title": (snapshot.get("snapshot_name") or "").strip(),
-        "messages": count,
-        "exported_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-    }
+    manifest.record(uuid, path, snapshot, count)
     return "written", path, count
 
 
@@ -387,14 +484,17 @@ def main() -> int:
         print(f"error: cannot create {outdir}: {exc}", file=sys.stderr)
         return 1
 
-    entries = load_manifest(outdir)
+    manifest = Manifest.load(outdir)
+    if manifest.entries:
+        print(f"manifest: {manifest.path} ({len(manifest.entries)} already exported)")
+
     failures: list[tuple[str, str]] = []
     written = skipped = 0
 
     for link in ordered:
         try:
             status, path, count = export_one(
-                link, outdir, args.include_thinking, entries, args.force
+                link, outdir, args.include_thinking, manifest, args.force
             )
         except ExportError as exc:
             failures.append((link, str(exc)))
@@ -410,7 +510,10 @@ def main() -> int:
                 written += 1
                 print(f"wrote {path} ({count} messages)")
                 # Persist as we go so an interrupted batch keeps its progress.
-                save_manifest(outdir, entries)
+                manifest.save()
+
+    # Skips can still have corrected stale paths worth keeping.
+    manifest.save()
 
     summary = f"{written} written, {skipped} skipped"
     if failures:

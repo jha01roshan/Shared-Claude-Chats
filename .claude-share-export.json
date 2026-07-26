@@ -98,7 +98,7 @@
     },
     "1545d277-b20e-47fd-9f46-0476f790ee83": {
       "exported_at": "2026-07-26T04:16:30+00:00",
-      "file": "Deleting-specific-files-in-Ubuntu.md",
+      "file": "claude_chats/Deleting-specific-files-in-Ubuntu.md",
       "messages": 6,
       "title": "Deleting specific files in Ubuntu"
     },
@@ -176,7 +176,7 @@
     },
     "20418e67-6bef-446c-89d7-4e714863bb91": {
       "exported_at": "2026-07-26T04:16:31+00:00",
-      "file": "Measure.md",
+      "file": "claude_chats/Measure.md",
       "messages": 12,
       "title": "Measure"
     },
@@ -296,7 +296,7 @@
     },
     "2e01ad60-ca38-4e14-ab60-74eaa45b2fbd": {
       "exported_at": "2026-07-26T04:16:31+00:00",
-      "file": "CLI-tool-for-text-to-speech-audio-generation.md",
+      "file": "claude_chats/CLI-tool-for-text-to-speech-audio-generation.md",
       "messages": 4,
       "title": "CLI tool for text-to-speech audio generation"
     },
@@ -320,7 +320,7 @@
     },
     "33dd4a49-be99-4c56-872f-09ea030376ed": {
       "exported_at": "2026-07-26T04:16:28+00:00",
-      "file": "Teaching-p-hacking-through-skepticism-and-incentives.md",
+      "file": "claude_chats/Teaching-p-hacking-through-skepticism-and-incentives.md",
       "messages": 20,
       "title": "Teaching p-hacking through skepticism and incentives"
     },
@@ -338,7 +338,7 @@
     },
     "3781f1b5-09d6-4cbe-a3ab-e8d289e85da9": {
       "exported_at": "2026-07-26T04:16:30+00:00",
-      "file": "Bihar-unemployment-rate-latest-quarter.md",
+      "file": "claude_chats/Bihar-unemployment-rate-latest-quarter.md",
       "messages": 2,
       "title": "Bihar unemployment rate latest quarter"
     },
@@ -416,7 +416,7 @@
     },
     "424b5181-0e09-4685-8f68-b58bfb4fe294": {
       "exported_at": "2026-07-26T04:16:29+00:00",
-      "file": "Deleuzes-philosophical-intuition-explained.md",
+      "file": "claude_chats/Deleuzes-philosophical-intuition-explained.md",
       "messages": 4,
       "title": "Deleuze's philosophical intuition explained"
     },
@@ -494,7 +494,7 @@
     },
     "4acab994-c22b-4ddf-81bd-2f22d947c521": {
       "exported_at": "2026-07-26T04:16:30+00:00",
-      "file": "Extracting-detailed-recipe-instructions.md",
+      "file": "claude_chats/Extracting-detailed-recipe-instructions.md",
       "messages": 6,
       "title": "Extracting detailed recipe instructions"
     },
@@ -638,7 +638,7 @@
     },
     "70775cf4-a781-4cc2-bd37-0316291f7388": {
       "exported_at": "2026-07-26T04:16:30+00:00",
-      "file": "Ivermectin-for-disease-prevention.md",
+      "file": "claude_chats/Ivermectin-for-disease-prevention.md",
       "messages": 4,
       "title": "Ivermectin for disease prevention"
     },
@@ -668,7 +668,7 @@
     },
     "759d64f0-1edb-4da0-959f-b2f2bc6a4bda": {
       "exported_at": "2026-07-26T04:16:29+00:00",
-      "file": "Linux-Serial-Communication-with-SAMD21.md",
+      "file": "claude_chats/Linux-Serial-Communication-with-SAMD21.md",
       "messages": 2,
       "title": "Linux Serial Communication with SAMD21"
     },
@@ -692,7 +692,7 @@
     },
     "79006cbb-e143-4c25-9016-f89ece45e9be": {
       "exported_at": "2026-07-26T04:16:28+00:00",
-      "file": "ARM-Assembly-to-C-Translation-for-GraphicsAnimation.md",
+      "file": "claude_chats/ARM-Assembly-to-C-Translation-for-GraphicsAnimation.md",
       "messages": 4,
       "title": "ARM Assembly to C Translation for Graphics/Animation"
     },
@@ -1058,7 +1058,7 @@
     },
     "b76ffb8c-8a9d-43fb-b02d-0990e2e2fc7c": {
       "exported_at": "2026-07-26T04:16:28+00:00",
-      "file": "네이버-AI-모델서비스-기획-직무-기업조사-리포트.md",
+      "file": "claude_chats/네이버-AI-모델서비스-기획-직무-기업조사-리포트.md",
       "messages": 2,
       "title": "네이버 AI 모델/서비스 기획 직무 기업조사 리포트"
     },
@@ -1208,7 +1208,7 @@
     },
     "c96129b9-bcb0-4eba-aee9-4a7ad236dfb7": {
       "exported_at": "2026-07-26T04:16:30+00:00",
-      "file": "Datasette-news-yaml-preview-tool.md",
+      "file": "claude_chats/Datasette-news-yaml-preview-tool.md",
       "messages": 6,
       "title": "Datasette news.yaml preview tool"
     },
@@ -1400,7 +1400,7 @@
     },
     "ec8b0563-d80b-4882-82e8-5504e3229a17": {
       "exported_at": "2026-07-26T04:16:28+00:00",
-      "file": "Ash-Framework-Custom-Postgres-Indexes.md",
+      "file": "claude_chats/Ash-Framework-Custom-Postgres-Indexes.md",
       "messages": 2,
       "title": "Ash Framework Custom Postgres Indexes"
     },
@@ -1454,7 +1454,7 @@
     },
     "f7444fc6-d6cd-44f9-b8b6-cf2247ed02d4": {
       "exported_at": "2026-07-26T04:16:29+00:00",
-      "file": "Californias-unprecedented-March-heat-wave.md",
+      "file": "claude_chats/Californias-unprecedented-March-heat-wave.md",
       "messages": 2,
       "title": "California's unprecedented March heat wave"
     },
