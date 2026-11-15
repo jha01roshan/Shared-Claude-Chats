@@ -23,3 +23,15 @@ Append-only session log. **Read this before starting new work** – other IDEs/s
 - `tejas_decimals/make_pdf.py` – generator (edit & re-run to change content).
 
 **Notes / Next:** From the photo, several of Tejas's written answers in Ex.12/14 look like decimal-place (hop count) slips, e.g. 0.2×0.3 written 0.6 (should be 0.06), 15×0.06 → 0.9, 20×0.05 → 1, 0.009×50 → 0.45, 0.001×0.1 → 0.0001, 11/8 → 1.375 – worth re-checking against the sheet's Hop Rule. Suggest re-doing those after Q6–10.
+
+---
+
+## Session – Claude Sonnet 5.5 | 2026-11-15 (#2)
+
+**Ask:** "Another two-sheeter just like the previous" – 2-page PDF (p1 colour lesson, p2 B/W practice), no answer sheet – plus a print command.
+
+**Approach:** Picked the next workbook skill (Ex.13 dividing decimals; Tejas's 11/8 slip is also a division). Method "SHIFT · DIVIDE · PLACE" (division = fraction, ×10 top & bottom = shift both points), with long-division picture for fraction→decimal, trap alert (÷ by <1 gets bigger), zeros-are-free, find the ?. Reused helpers from `make_pdf.py`.
+
+**Accomplished:** `tejas_decimals/Tejas_Dividing_Decimals.pdf` (2 pages, A4) and generator `tejas_decimals/make_pdf2.py`. Checked layout via rendered PNGs; fixed overflowing tick-boxes and cluttered long-division sketch.
+
+**Notes / Next:** Answers (for the parent) were given in chat, not in the PDF. Cloud session can't reach a printer – print commands were provided for the user's own machine.
