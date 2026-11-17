@@ -34,3 +34,13 @@ Append-only log of work done on this project across IDEs/sessions. Read this bef
 | Accomplished | Revised email shared in chat. |
 | Files touched | `log.md` |
 | Notes / Follow-ups | Same open items as the earlier entry (recipient name, table to be shared). |
+
+## 2026-11-17 | Claude Sonnet 5.5 (`claude-sonnet-5-5`) | Proofread
+
+| Field | Content |
+|---|---|
+| Ask | Proofread the user's own rephrased reply (to Vivek). Fix grammar, spelling and incorrect English only; no other changes. |
+| Approach | Corrected typos, verb forms, plurals, capitalization and punctuation. Kept wording, structure and tone as written. |
+| Accomplished | Corrected email shared in chat. |
+| Files touched | `log.md` |
+| Notes / Follow-ups | Fixes: "Fwo" to "Two", "You/Sugato" to "you/Sugato", "met few time" to "met a few times", "persists" to "persist", "give it a shape" to "give it shape", added "it" in "share it by tomorrow", added a comma before "and we can meet". |
